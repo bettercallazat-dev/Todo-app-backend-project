@@ -19,7 +19,7 @@ class TaskService:
         self.db.commit()
         return TaskSchema.model_validate(task_orm)
 
-    def update_task(self, task_id: str, task_update: update_task) -> TaskSchema:
+    def update_task(self, task_id: str, task_update: TaskUpdate) -> TaskSchema:
         task_for_update = self.task_repository.db_get_by_id(task_id=task_id)
         if not task_for_update:
             raise TaskNotFound(f"Задача с id {task_id} не найдена")
@@ -27,10 +27,9 @@ class TaskService:
             task_for_update.title = task_update.title
         if task_update.completed is not None:
             task_for_update.completed = task_update.completed
-                
-            self.db.commit()
-            return TaskSchema.model_validate(task_for_update)
-        
+
+        self.db.commit()
+        return TaskSchema.model_validate(task_for_update)
     def delete_task(self, task_id: str) -> TaskSchema:
         task_for_delete = self.task_repository.db_get_by_id(task_id=task_id)
         if not task_for_delete:        
